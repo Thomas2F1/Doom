@@ -12,6 +12,63 @@ import secrets
 import os
 import datetime
 
+# SendGrid per email automatiche
+SENDGRID_API_KEY    = os.environ.get("SENDGRID_API_KEY", "")
+SENDGRID_FROM_EMAIL = os.environ.get("SENDGRID_FROM_EMAIL", "noreply@doom-ai.it")
+
+def invia_email_licenza(email: str, license_key: str, versione: str):
+    """Invia la license key via email all'utente appena pagato."""
+    if not SENDGRID_API_KEY:
+        print(f"[EMAIL] SendGrid non configurato — key: {license_key}")
+        return
+
+    prezzi = {"lite": "2.29", "pro": "3.99", "ultra": "5.99"}
+    prezzo = prezzi.get(versione, "?")
+
+    try:
+        import urllib.request
+        import json as _json
+
+        soggetto = f"La tua License Key D.O.O.M {versione.upper()}"
+        corpo_html = f"""
+        <div style="background:#010810;color:#E8F4FF;padding:40px;font-family:'Courier New',monospace;">
+          <h1 style="color:#00B4FF;letter-spacing:4px;">◈ D.O.O.M</h1>
+          <h2 style="color:#E8F4FF;">Grazie per aver acquistato Doom {versione.upper()}!</h2>
+          <p style="color:#4A7A9B;">La tua license key è:</p>
+          <div style="background:#0A1E32;border:1px solid #003870;padding:20px;margin:20px 0;">
+            <code style="color:#00B4FF;font-size:20px;letter-spacing:3px;">{license_key}</code>
+          </div>
+          <p style="color:#4A7A9B;">Piano: <strong style="color:#E8F4FF;">Doom {versione.upper()}</strong> — €{prezzo}/mese</p>
+          <hr style="border-color:#003870;margin:30px 0;">
+          <p style="color:#4A7A9B;font-size:12px;">
+            Al primo avvio di Doom inserisci questa key nella schermata di attivazione.<br>
+            Per supporto: support@doom-ai.it
+          </p>
+        </div>
+        """
+
+        payload = _json.dumps({
+            "personalizations": [{"to": [{"email": email}]}],
+            "from": {"email": SENDGRID_FROM_EMAIL, "name": "D.O.O.M AI"},
+            "subject": soggetto,
+            "content": [{"type": "text/html", "value": corpo_html}]
+        }).encode()
+
+        req = urllib.request.Request(
+            "https://api.sendgrid.com/v3/mail/send",
+            data=payload,
+            headers={
+                "Authorization": f"Bearer {SENDGRID_API_KEY}",
+                "Content-Type": "application/json"
+            },
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            print(f"[EMAIL] Inviata a {email} — status {resp.status}")
+
+    except Exception as e:
+        print(f"[EMAIL] Errore: {e}")
+
 app = Flask(__name__)
 
 # ── Configurazione ────────────────────────────────────────────────────────────
@@ -181,9 +238,7 @@ def stripe_webhook():
             """, (key, email, versione, sub_id, cus_id, ora, scadenza))
             db.commit()
             print(f"[LICENSE] Nuova licenza {versione}: {key} → {email}")
-
-            # TODO: invia email con la key usando SendGrid
-            # _invia_email_licenza(email, key, versione)
+            invia_email_licenza(email, key, versione)
 
         finally:
             db.close()
