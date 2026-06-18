@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-
+ 
 :root {
   --ink:    #010810;
   --blue:   #00B4FF;
@@ -21,16 +21,16 @@
   --mono:   'Space Mono', monospace;
   --sans:   'Space Grotesk', sans-serif;
 }
-
+ 
 html { scroll-behavior: smooth; }
-
+ 
 body {
   background: var(--ink);
   color: var(--text);
   font-family: var(--sans);
   overflow-x: hidden;
 }
-
+ 
 /* ── SCANLINE OVERLAY ── */
 body::before {
   content: '';
@@ -45,7 +45,7 @@ body::before {
   pointer-events: none;
   z-index: 1000;
 }
-
+ 
 /* ── NAV ── */
 nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 900;
@@ -83,7 +83,7 @@ nav {
   transition: all .2s;
 }
 .nav-cta:hover { background: var(--white); }
-
+ 
 /* ── HERO ── */
 .hero {
   min-height: 100vh;
@@ -93,7 +93,7 @@ nav {
   overflow: hidden;
   padding: 120px 40px 80px;
 }
-
+ 
 /* Grid di sfondo animata */
 .hero-grid {
   position: absolute; inset: 0;
@@ -103,7 +103,7 @@ nav {
   background-size: 60px 60px;
   mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
 }
-
+ 
 /* Glow centrale */
 .hero-glow {
   position: absolute;
@@ -113,13 +113,13 @@ nav {
   transform: translate(-50%,-50%);
   pointer-events: none;
 }
-
+ 
 .hero-inner {
   position: relative;
   text-align: center;
   max-width: 960px;
 }
-
+ 
 /* HUD animato */
 .hud-ring {
   width: 280px; height: 280px;
@@ -129,7 +129,7 @@ nav {
 .hud-ring canvas {
   width: 100%; height: 100%;
 }
-
+ 
 .hero-tag {
   font-family: var(--mono);
   font-size: 11px;
@@ -147,7 +147,7 @@ nav {
   width: 40px; height: 1px;
   background: var(--glow);
 }
-
+ 
 .hero-title {
   font-family: var(--sans);
   font-size: clamp(52px, 8vw, 100px);
@@ -159,7 +159,7 @@ nav {
 }
 .hero-title .accent { color: var(--blue); }
 .hero-title .dim-word { color: var(--glow); }
-
+ 
 .hero-sub {
   font-size: clamp(16px, 2vw, 20px);
   font-weight: 300;
@@ -168,7 +168,7 @@ nav {
   margin: 0 auto 56px;
   line-height: 1.7;
 }
-
+ 
 .hero-btns {
   display: flex;
   gap: 16px;
@@ -197,7 +197,7 @@ nav {
   transition: background .2s;
 }
 .btn-main:hover::after { background: rgba(255,255,255,.15); }
-
+ 
 .btn-outline {
   font-family: var(--mono);
   font-size: 13px;
@@ -211,7 +211,7 @@ nav {
   transition: all .2s;
 }
 .btn-outline:hover { border-color: var(--blue); background: rgba(0,180,255,.05); }
-
+ 
 /* Stats bar */
 .stats-bar {
   margin-top: 80px;
@@ -244,14 +244,14 @@ nav {
   margin-top: 4px;
   display: block;
 }
-
+ 
 /* ── SEZIONE CAPACITÀ ── */
 .section {
   max-width: 1160px;
   margin: 0 auto;
   padding: 140px 40px;
 }
-
+ 
 .section-eyebrow {
   font-family: var(--mono);
   font-size: 10px;
@@ -268,7 +268,7 @@ nav {
   height: 1px;
   background: var(--glow);
 }
-
+ 
 .section-title {
   font-size: clamp(36px, 5vw, 56px);
   font-weight: 700;
@@ -277,9 +277,9 @@ nav {
   line-height: 1.1;
   margin-bottom: 20px;
 }
-
+ 
 .section-title .accent { color: var(--blue); }
-
+ 
 .section-body {
   font-size: 17px;
   font-weight: 300;
@@ -288,7 +288,7 @@ nav {
   line-height: 1.75;
   margin-bottom: 72px;
 }
-
+ 
 /* Capabilities grid */
 .cap-grid {
   display: grid;
@@ -297,7 +297,7 @@ nav {
   background: rgba(0,180,255,.06);
   border: 1px solid rgba(0,180,255,.06);
 }
-
+ 
 .cap-card {
   background: var(--ink);
   padding: 40px 36px;
@@ -314,7 +314,7 @@ nav {
   transition: background .25s;
 }
 .cap-card:hover::before { background: var(--blue); }
-
+ 
 .cap-icon {
   font-size: 28px;
   margin-bottom: 20px;
@@ -333,7 +333,7 @@ nav {
   color: var(--text);
   line-height: 1.7;
 }
-
+ 
 /* ── PRICING ── */
 .pricing-section {
   padding: 0 40px 160px;
@@ -342,7 +342,7 @@ nav {
   max-width: 1160px;
   margin: 0 auto;
 }
-
+ 
 .plans {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -351,7 +351,7 @@ nav {
   border: 1px solid rgba(0,180,255,.06);
   margin-top: 72px;
 }
-
+ 
 .plan {
   background: var(--ink);
   padding: 56px 44px;
@@ -359,7 +359,7 @@ nav {
   display: flex;
   flex-direction: column;
 }
-
+ 
 .plan.featured {
   background: var(--dim);
 }
@@ -375,7 +375,7 @@ nav {
   background: var(--blue);
   padding: 5px 20px;
 }
-
+ 
 .plan-tier {
   font-family: var(--mono);
   font-size: 10px;
@@ -383,9 +383,9 @@ nav {
   color: var(--text);
   margin-bottom: 36px;
 }
-
+ 
 .plan-price-block { margin-bottom: 48px; }
-
+ 
 .plan-price {
   font-size: 72px;
   font-weight: 700;
@@ -413,7 +413,7 @@ nav {
   margin-top: 8px;
   letter-spacing: 1px;
 }
-
+ 
 .plan-features {
   list-style: none;
   margin-bottom: 48px;
@@ -438,7 +438,7 @@ nav {
   flex-shrink: 0;
   margin-top: 1px;
 }
-
+ 
 .plan-btn {
   font-family: var(--mono);
   font-size: 12px;
@@ -459,7 +459,7 @@ nav {
   color: var(--ink);
   border-color: var(--blue);
 }
-
+ 
 /* ── HOW IT WORKS ── */
 .how-section {
   border-top: 1px solid rgba(0,180,255,.08);
@@ -513,7 +513,7 @@ nav {
   color: var(--text);
   line-height: 1.7;
 }
-
+ 
 /* ── FOOTER ── */
 footer {
   padding: 60px;
@@ -543,7 +543,7 @@ footer {
   letter-spacing: 1px;
   color: rgba(74,122,155,.4);
 }
-
+ 
 /* ── CAPABILITIES LIST ── */
 .cap-categories {
   display: grid;
@@ -595,7 +595,7 @@ footer {
   font-size: 14px;
   flex-shrink: 0;
 }
-
+ 
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
   nav { padding: 16px 24px; }
@@ -608,14 +608,14 @@ footer {
   footer { flex-direction: column; gap: 24px; text-align: center; }
   .footer-links { flex-wrap: wrap; justify-content: center; }
 }
-
+ 
 /* ── ANIMAZIONE GLOW PULSANTE ── */
 @keyframes pulse-glow {
   0%, 100% { opacity: .6; transform: translate(-50%,-50%) scale(1); }
   50%       { opacity: 1;  transform: translate(-50%,-50%) scale(1.08); }
 }
 .hero-glow { animation: pulse-glow 4s ease-in-out infinite; }
-
+ 
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(30px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -631,7 +631,7 @@ footer {
 </style>
 </head>
 <body>
-
+ 
 <!-- NAV -->
 <nav>
   <div class="nav-logo">◈ <span>D.</span>O.<span>O.</span>M</div>
@@ -642,32 +642,36 @@ footer {
   </div>
   <a href="#piani" class="nav-cta">INIZIA ORA</a>
 </nav>
-
+ 
 <!-- HERO -->
 <section class="hero">
   <div class="hero-grid"></div>
   <div class="hero-glow"></div>
-
+ 
   <div class="hero-inner">
     <div class="hero-tag">ASSISTENTE AI PER WINDOWS</div>
-
+ 
     <h1 class="hero-title">
       Il tuo PC.<br>
       <span class="accent">La tua voce.</span><br>
       <span class="dim-word">Nessun limite.</span>
     </h1>
-
+ 
     <p class="hero-sub">
       Doom è l'AI che vive nel tuo PC e lo controlla per te.
       Parli. Lui agisce. Musica, email, siti, codice, file —
       tutto in meno di un secondo.
     </p>
-
+ 
     <div class="hero-btns">
-      <a href="#piani" class="btn-main">SCEGLI IL TUO PIANO →</a>
-      <a href="#capacita" class="btn-outline">SCOPRI LE CAPACITÀ</a>
+      <a href="https://drive.google.com/file/d/1QiTeGVjnLTTn-l9wbw2beToSco13E1-D/view?usp=sharing" class="btn-main">⚡ PROVA GRATIS 3 GIORNI</a>
+      <a href="#piani" class="btn-outline">SCEGLI IL TUO PIANO →</a>
     </div>
-
+ 
+    <p style="font-family:var(--mono);font-size:11px;color:#1A4A6A;margin-top:20px;letter-spacing:1px;">
+      3 GIORNI GRATIS · NESSUNA CARTA RICHIESTA · SCOPRI LA POTENZA DI DOOM
+    </p>
+ 
     <div class="stats-bar">
       <div class="stat">
         <span class="stat-num">&lt;1s</span>
@@ -688,7 +692,7 @@ footer {
     </div>
   </div>
 </section>
-
+ 
 <!-- CAPACITÀ -->
 <section class="section" id="capacita">
   <div class="section-eyebrow">CAPACITÀ COMPLETE</div>
@@ -697,9 +701,9 @@ footer {
     Ogni comando, ogni funzione, ogni controllo. Parli — lui agisce.
     Niente tastiera. Niente mouse. Solo la tua voce.
   </p>
-
+ 
   <div class="cap-categories">
-
+ 
     <!-- VOCE E TTS -->
     <div class="cap-cat">
       <div class="cap-cat-header">
@@ -716,7 +720,7 @@ footer {
         <li>Calibrazione automatica del microfono</li>
       </ul>
     </div>
-
+ 
     <!-- SITI WEB -->
     <div class="cap-cat">
       <div class="cap-cat-header">
@@ -732,7 +736,7 @@ footer {
         <li>Sempre con Chrome, mai con Edge</li>
       </ul>
     </div>
-
+ 
     <!-- APP -->
     <div class="cap-cat">
       <div class="cap-cat-header">
@@ -748,7 +752,7 @@ footer {
         <li>Verifica che l'app si sia avviata davvero</li>
       </ul>
     </div>
-
+ 
     <!-- SPOTIFY -->
     <div class="cap-cat">
       <div class="cap-cat-header">
@@ -764,7 +768,7 @@ footer {
         <li>Fallback con tasto media Play</li>
       </ul>
     </div>
-
+ 
     <!-- WHATSAPP -->
     <div class="cap-cat">
       <div class="cap-cat-header">
@@ -779,7 +783,7 @@ footer {
         <li>Evita invii doppi per sicurezza</li>
       </ul>
     </div>
-
+ 
     <!-- EMAIL -->
     <div class="cap-cat">
       <div class="cap-cat-header">
@@ -794,7 +798,7 @@ footer {
         <li>"Rispondi: ci vediamo domani"</li>
       </ul>
     </div>
-
+ 
     <!-- SISTEMA PC -->
     <div class="cap-cat">
       <div class="cap-cat-header">
@@ -809,7 +813,7 @@ footer {
         <li>Avvisi vocali automatici se critico</li>
       </ul>
     </div>
-
+ 
     <!-- GRIGLIA APP -->
     <div class="cap-cat">
       <div class="cap-cat-header">
@@ -825,7 +829,7 @@ footer {
         <li>Scrolla, zoom in/out, trova in pagina</li>
       </ul>
     </div>
-
+ 
     <!-- BROWSER -->
     <div class="cap-cat">
       <div class="cap-cat-header">
@@ -840,7 +844,7 @@ footer {
         <li>Cerca YouTube e naviga i risultati</li>
       </ul>
     </div>
-
+ 
     <!-- FILE E CARTELLE -->
     <div class="cap-cat">
       <div class="cap-cat-header">
@@ -855,7 +859,7 @@ footer {
         <li>"Cosa c'è sul desktop"</li>
       </ul>
     </div>
-
+ 
     <!-- CALENDARIO E ROUTINE -->
     <div class="cap-cat">
       <div class="cap-cat-header">
@@ -870,7 +874,7 @@ footer {
         <li>Esegue automaticamente all'orario</li>
       </ul>
     </div>
-
+ 
     <!-- PROMEMORIA -->
     <div class="cap-cat">
       <div class="cap-cat-header">
@@ -884,7 +888,7 @@ footer {
         <li>Parser italiano: minuti, ore, secondi</li>
       </ul>
     </div>
-
+ 
     <!-- METEO E NOTIZIE -->
     <div class="cap-cat">
       <div class="cap-cat-header">
@@ -899,7 +903,7 @@ footer {
         <li>Dati in tempo reale via API</li>
       </ul>
     </div>
-
+ 
     <!-- CALCOLI E CODICE -->
     <div class="cap-cat">
       <div class="cap-cat-header">
@@ -914,7 +918,7 @@ footer {
         <li>Sandbox isolato — sicuro al 100%</li>
       </ul>
     </div>
-
+ 
     <!-- VISIONE SCHERMO -->
     <div class="cap-cat">
       <div class="cap-cat-header">
@@ -930,7 +934,7 @@ footer {
         <li>Clicca elementi per nome su qualsiasi pagina</li>
       </ul>
     </div>
-
+ 
     <!-- MEMORIA -->
     <div class="cap-cat">
       <div class="cap-cat-header">
@@ -946,7 +950,7 @@ footer {
         <li>Usa i ricordi nelle risposte naturalmente</li>
       </ul>
     </div>
-
+ 
     <!-- AUTONOMIA -->
     <div class="cap-cat">
       <div class="cap-cat-header">
@@ -961,7 +965,7 @@ footer {
         <li>Aggiornamenti vocali su cosa sta facendo</li>
       </ul>
     </div>
-
+ 
     <!-- INFO ISTANTANEE -->
     <div class="cap-cat">
       <div class="cap-cat-header">
@@ -976,24 +980,45 @@ footer {
         <li>Retry automatico se rate limit</li>
       </ul>
     </div>
-
+ 
   </div>
 </section>
-
+ 
 <!-- PIANI -->
 <section class="pricing-section" id="piani">
   <div class="pricing-inner">
     <div class="section-eyebrow">PIANI</div>
     <h2 class="section-title">Scegli il tuo<br><span class="accent">livello di controllo.</span></h2>
     <p class="section-body">Tutti i piani includono aggiornamenti automatici. Le API keys sono tue e gratuite — paghi solo il software.</p>
-
+ 
+    <div style="background:var(--dim);border:1px solid rgba(0,180,255,.15);
+                padding:32px 40px;text-align:center;margin-bottom:72px;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:4px;
+                  color:var(--blue);margin-bottom:12px;">OFFERTA LANCIO</div>
+      <h3 style="font-size:28px;font-weight:700;color:var(--white);margin-bottom:12px;">
+        Prova Doom gratis per 3 giorni
+      </h3>
+      <p style="color:var(--text);font-size:14px;font-weight:300;margin-bottom:24px;line-height:1.7;">
+        Scarica la versione di prova. Nessuna carta richiesta.<br>
+        Dopo 3 giorni scegli il piano che fa per te — o lascia perdere, senza penali.
+      </p>
+      <a href="https://drive.google.com/file/d/1QiTeGVjnLTTn-l9wbw2beToSco13E1-D/view?usp=sharing"
+         class="btn-main" style="display:inline-block;text-decoration:none;">
+        ⚡ SCARICA GRATIS — 3 GIORNI
+      </a>
+      <p style="font-family:var(--mono);font-size:10px;color:#1A3A5A;
+                margin-top:16px;letter-spacing:1px;">
+        WINDOWS 10/11 · NESSUNA INSTALLAZIONE · DOPPIO CLICK E VIA
+      </p>
+    </div>
+ 
     <div class="plans">
-
+ 
       <!-- LITE -->
       <div class="plan">
         <div class="plan-tier">DOOM LITE</div>
         <div class="plan-price-block">
-          <div class="plan-price"><sup>€</sup>2<sub>,29</sub></div>
+          <div class="plan-price"><sup>€</sup>2<sub>,99</sub></div>
           <div class="plan-period">AL MESE · FATTURATO MENSILMENTE</div>
         </div>
         <ul class="plan-features">
@@ -1005,9 +1030,9 @@ footer {
           <li>Standby e risveglio vocale</li>
           <li>Interrompi Doom mentre parla</li>
         </ul>
-        <a href="#" class="plan-btn" onclick="acquista('lite')">INIZIA CON LITE</a>
+        <a href="https://gugliotta30.gumroad.com/l/krfsa" class="plan-btn" target="_blank">INIZIA CON LITE</a>
       </div>
-
+ 
       <!-- PRO -->
       <div class="plan featured">
         <div class="plan-tier">DOOM PRO</div>
@@ -1026,9 +1051,9 @@ footer {
           <li>Memoria conversazioni permanente</li>
           <li>Voce TTS +25% più veloce</li>
         </ul>
-        <a href="#" class="plan-btn" onclick="acquista('pro')">INIZIA CON PRO</a>
+        <a href="https://gugliotta30.gumroad.com/l/xhkvoe" class="plan-btn" target="_blank">INIZIA CON PRO</a>
       </div>
-
+ 
       <!-- ULTRA -->
       <div class="plan">
         <div class="plan-tier">DOOM ULTRA</div>
@@ -1047,23 +1072,23 @@ footer {
           <li>Aggiornamenti funzionalità in anteprima</li>
           <li>Priorità nel supporto</li>
         </ul>
-        <a href="#" class="plan-btn" onclick="acquista('ultra')">INIZIA CON ULTRA</a>
+        <a href="https://gugliotta30.gumroad.com/l/yydit" class="plan-btn" target="_blank">INIZIA CON ULTRA</a>
       </div>
-
+ 
     </div>
-
+ 
     <p style="text-align:center;font-family:var(--mono);font-size:10px;color:rgba(74,122,155,.5);margin-top:32px;letter-spacing:1px;">
       CANCELLA QUANDO VUOI &nbsp;·&nbsp; NESSUN COSTO NASCOSTO &nbsp;·&nbsp; LE TUE API KEYS RESTANO TUE
     </p>
   </div>
 </section>
-
+ 
 <!-- COME FUNZIONA -->
 <section class="how-section" id="come-funziona">
   <div class="how-inner">
     <div class="section-eyebrow">SETUP</div>
     <h2 class="section-title">Attivo in<br><span class="accent">5 minuti.</span></h2>
-
+ 
     <div class="steps">
       <div class="step">
         <div class="step-num">01</div>
@@ -1088,7 +1113,7 @@ footer {
     </div>
   </div>
 </section>
-
+ 
 <!-- GESTIONE ABBONAMENTO -->
 <section style="padding:80px 40px;text-align:center;border-top:1px solid rgba(0,180,255,.08);">
   <div style="max-width:600px;margin:0 auto;">
@@ -1124,7 +1149,7 @@ footer {
     </p>
   </div>
 </section>
-
+ 
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo">◈ D.O.O.M</div>
@@ -1135,10 +1160,10 @@ footer {
   </div>
   <div class="footer-copy">© 2025 DOOM AI · TUTTI I DIRITTI RISERVATI</div>
 </footer>
-
+ 
 <script>
 const SERVER = "https://doom-license.railway.app";
-
+ 
 function acquista(piano) {
   const email = prompt("Inserisci la tua email per ricevere la license key:");
   if (!email || !email.includes('@')) {
@@ -1162,7 +1187,7 @@ function acquista(piano) {
     alert("Contattaci a support@doom-ai.it per completare l'acquisto.");
   });
 }
-
+ 
 // Scroll reveal
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => {
@@ -1172,7 +1197,7 @@ const observer = new IntersectionObserver((entries) => {
     }
   });
 }, { threshold: 0.1 });
-
+ 
 document.querySelectorAll('.cap-card, .plan, .step').forEach(el => {
   el.style.opacity = '0';
   el.style.transform = 'translateY(24px)';
