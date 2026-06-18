@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D.O.O.M — L'AI che controlla il tuo PC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --ink:    #010810;
+  --blue:   #00B4FF;
+  --blue2:  #0066CC;
+  --glow:   #003870;
+  --dim:    #0A1E32;
+  --text:   #4A7A9B;
+  --light:  #8AB8D4;
+  --white:  #E8F4FF;
+  --mono:   'Space Mono', monospace;
+  --sans:   'Space Grotesk', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--sans);
+  overflow-x: hidden;
+}
+
+/* ── SCANLINE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,.07) 2px,
+    rgba(0,0,0,.07) 4px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 60px;
+  background: rgba(1,8,16,.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0,180,255,.1);
+}
+.nav-logo {
+  font-family: var(--mono);
+  font-size: 18px;
+  color: var(--blue);
+  letter-spacing: 6px;
+}
+.nav-logo span { color: rgba(0,180,255,.35); }
+.nav-links { display: flex; gap: 40px; }
+.nav-links a {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  text-decoration: none;
+  letter-spacing: 2px;
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--blue); }
+.nav-cta {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink);
+  background: var(--blue);
+  padding: 10px 24px;
+  letter-spacing: 2px;
+  text-decoration: none;
+  transition: all .2s;
+}
+.nav-cta:hover { background: var(--white); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 120px 40px 80px;
+}
+
+/* Grid di sfondo animata */
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,180,255,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,180,255,.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+}
+
+/* Glow centrale */
+.hero-glow {
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(0,102,204,.25) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  pointer-events: none;
+}
+
+.hero-inner {
+  position: relative;
+  text-align: center;
+  max-width: 960px;
+}
+
+/* HUD animato */
+.hud-ring {
+  width: 280px; height: 280px;
+  margin: 0 auto 60px;
+  position: relative;
+}
+.hud-ring canvas {
+  width: 100%; height: 100%;
+}
+
+.hero-tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--blue);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.hero-tag::before,
+.hero-tag::after {
+  content: '';
+  width: 40px; height: 1px;
+  background: var(--glow);
+}
+
+.hero-title {
+  font-family: var(--sans);
+  font-size: clamp(52px, 8vw, 100px);
+  font-weight: 700;
+  line-height: .95;
+  color: var(--white);
+  letter-spacing: -2px;
+  margin-bottom: 32px;
+}
+.hero-title .accent { color: var(--blue); }
+.hero-title .dim-word { color: var(--glow); }
+
+.hero-sub {
+  font-size: clamp(16px, 2vw, 20px);
+  font-weight: 300;
+  color: var(--text);
+  max-width: 580px;
+  margin: 0 auto 56px;
+  line-height: 1.7;
+}
+
+.hero-btns {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.btn-main {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--ink);
+  background: var(--blue);
+  padding: 18px 48px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all .2s;
+  position: relative;
+  overflow: hidden;
+}
+.btn-main::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background .2s;
+}
+.btn-main:hover::after { background: rgba(255,255,255,.15); }
+
+.btn-outline {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--blue);
+  background: transparent;
+  border: 1px solid var(--glow);
+  padding: 18px 48px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all .2s;
+}
+.btn-outline:hover { border-color: var(--blue); background: rgba(0,180,255,.05); }
+
+/* Stats bar */
+.stats-bar {
+  margin-top: 80px;
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  border: 1px solid rgba(0,180,255,.1);
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.stat {
+  flex: 1;
+  padding: 24px 20px;
+  text-align: center;
+  border-right: 1px solid rgba(0,180,255,.1);
+}
+.stat:last-child { border-right: none; }
+.stat-num {
+  font-family: var(--mono);
+  font-size: 28px;
+  color: var(--blue);
+  font-weight: 700;
+  display: block;
+}
+.stat-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--text);
+  margin-top: 4px;
+  display: block;
+}
+
+/* ── SEZIONE CAPACITÀ ── */
+.section {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 140px 40px;
+}
+
+.section-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--blue);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-eyebrow::after {
+  content: '';
+  flex: 1; max-width: 60px;
+  height: 1px;
+  background: var(--glow);
+}
+
+.section-title {
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -1px;
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+.section-title .accent { color: var(--blue); }
+
+.section-body {
+  font-size: 17px;
+  font-weight: 300;
+  color: var(--text);
+  max-width: 540px;
+  line-height: 1.75;
+  margin-bottom: 72px;
+}
+
+/* Capabilities grid */
+.cap-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(0,180,255,.06);
+  border: 1px solid rgba(0,180,255,.06);
+}
+
+.cap-card {
+  background: var(--ink);
+  padding: 40px 36px;
+  position: relative;
+  transition: background .25s;
+}
+.cap-card:hover { background: var(--dim); }
+.cap-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: transparent;
+  transition: background .25s;
+}
+.cap-card:hover::before { background: var(--blue); }
+
+.cap-icon {
+  font-size: 28px;
+  margin-bottom: 20px;
+  display: block;
+}
+.cap-title {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: var(--blue);
+  margin-bottom: 12px;
+}
+.cap-desc {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text);
+  line-height: 1.7;
+}
+
+/* ── PRICING ── */
+.pricing-section {
+  padding: 0 40px 160px;
+}
+.pricing-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+.plans {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(0,180,255,.06);
+  border: 1px solid rgba(0,180,255,.06);
+  margin-top: 72px;
+}
+
+.plan {
+  background: var(--ink);
+  padding: 56px 44px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.plan.featured {
+  background: var(--dim);
+}
+.plan.featured::before {
+  content: 'PIÙ SCELTO';
+  position: absolute;
+  top: -1px; left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--ink);
+  background: var(--blue);
+  padding: 5px 20px;
+}
+
+.plan-tier {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--text);
+  margin-bottom: 36px;
+}
+
+.plan-price-block { margin-bottom: 48px; }
+
+.plan-price {
+  font-size: 72px;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1;
+  letter-spacing: -2px;
+}
+.plan-price sup {
+  font-size: 24px;
+  font-weight: 400;
+  vertical-align: super;
+  color: var(--text);
+  letter-spacing: 0;
+}
+.plan-price sub {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: 0;
+}
+.plan-period {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  margin-top: 8px;
+  letter-spacing: 1px;
+}
+
+.plan-features {
+  list-style: none;
+  margin-bottom: 48px;
+  flex: 1;
+}
+.plan-features li {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--light);
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(0,180,255,.06);
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  line-height: 1.4;
+}
+.plan-features li::before {
+  content: '→';
+  font-family: var(--mono);
+  color: var(--blue);
+  font-size: 12px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.plan-btn {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 2px;
+  padding: 18px;
+  border: 1px solid var(--glow);
+  color: var(--blue);
+  background: transparent;
+  cursor: pointer;
+  transition: all .2s;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+}
+.plan-btn:hover,
+.plan.featured .plan-btn {
+  background: var(--blue);
+  color: var(--ink);
+  border-color: var(--blue);
+}
+
+/* ── HOW IT WORKS ── */
+.how-section {
+  border-top: 1px solid rgba(0,180,255,.08);
+  border-bottom: 1px solid rgba(0,180,255,.08);
+  background: var(--dim);
+  padding: 140px 40px;
+}
+.how-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+}
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+  margin-top: 80px;
+  position: relative;
+}
+.steps::before {
+  content: '';
+  position: absolute;
+  top: 28px; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--glow) 30%, var(--glow) 70%, transparent);
+}
+.step { text-align: center; position: relative; }
+.step-num {
+  width: 56px; height: 56px;
+  border: 1px solid var(--glow);
+  background: var(--ink);
+  font-family: var(--mono);
+  font-size: 18px;
+  color: var(--blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  position: relative;
+  z-index: 1;
+}
+.step h4 {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--white);
+  margin-bottom: 10px;
+}
+.step p {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--text);
+  line-height: 1.7;
+}
+
+/* ── FOOTER ── */
+footer {
+  padding: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(0,180,255,.08);
+}
+.footer-logo {
+  font-family: var(--mono);
+  font-size: 16px;
+  color: var(--blue);
+  letter-spacing: 6px;
+}
+.footer-links { display: flex; gap: 32px; }
+.footer-links a {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text);
+  text-decoration: none;
+}
+.footer-links a:hover { color: var(--blue); }
+.footer-copy {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: rgba(74,122,155,.4);
+}
+
+/* ── CAPABILITIES LIST ── */
+.cap-categories {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(0,180,255,.06);
+  border: 1px solid rgba(0,180,255,.06);
+}
+.cap-cat {
+  background: var(--ink);
+  padding: 36px 32px;
+  transition: background .2s;
+}
+.cap-cat:hover { background: var(--dim); }
+.cap-cat-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0,180,255,.08);
+}
+.cap-cat-icon { font-size: 22px; }
+.cap-cat-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--blue);
+}
+.cap-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cap-list li {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--light);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  line-height: 1.4;
+}
+.cap-list li::before {
+  content: '›';
+  font-family: var(--mono);
+  color: var(--blue);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  nav { padding: 16px 24px; }
+  .nav-links { display: none; }
+  .cap-grid { grid-template-columns: 1fr; }
+  .cap-categories { grid-template-columns: 1fr; }
+  .plans { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr 1fr; }
+  .steps::before { display: none; }
+  footer { flex-direction: column; gap: 24px; text-align: center; }
+  .footer-links { flex-wrap: wrap; justify-content: center; }
+}
+
+/* ── ANIMAZIONE GLOW PULSANTE ── */
+@keyframes pulse-glow {
+  0%, 100% { opacity: .6; transform: translate(-50%,-50%) scale(1); }
+  50%       { opacity: 1;  transform: translate(-50%,-50%) scale(1.08); }
+}
+.hero-glow { animation: pulse-glow 4s ease-in-out infinite; }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-inner > * {
+  animation: fade-up .8s ease both;
+}
+.hero-inner > *:nth-child(1) { animation-delay: .1s; }
+.hero-inner > *:nth-child(2) { animation-delay: .2s; }
+.hero-inner > *:nth-child(3) { animation-delay: .35s; }
+.hero-inner > *:nth-child(4) { animation-delay: .5s; }
+.hero-inner > *:nth-child(5) { animation-delay: .6s; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">◈ <span>D.</span>O.<span>O.</span>M</div>
+  <div class="nav-links">
+    <a href="#capacita">CAPACITÀ</a>
+    <a href="#piani">PIANI</a>
+    <a href="#come-funziona">COME FUNZIONA</a>
+  </div>
+  <a href="#piani" class="nav-cta">INIZIA ORA</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-inner">
+    <div class="hero-tag">ASSISTENTE AI PER WINDOWS</div>
+
+    <h1 class="hero-title">
+      Il tuo PC.<br>
+      <span class="accent">La tua voce.</span><br>
+      <span class="dim-word">Nessun limite.</span>
+    </h1>
+
+    <p class="hero-sub">
+      Doom è l'AI che vive nel tuo PC e lo controlla per te.
+      Parli. Lui agisce. Musica, email, siti, codice, file —
+      tutto in meno di un secondo.
+    </p>
+
+    <div class="hero-btns">
+      <a href="#piani" class="btn-main">SCEGLI IL TUO PIANO →</a>
+      <a href="#capacita" class="btn-outline">SCOPRI LE CAPACITÀ</a>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat">
+        <span class="stat-num">&lt;1s</span>
+        <span class="stat-label">TEMPO DI RISPOSTA</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">50+</span>
+        <span class="stat-label">COMANDI VOCALI</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">100%</span>
+        <span class="stat-label">ITALIANO</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">24/7</span>
+        <span class="stat-label">SEMPRE ATTIVO</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CAPACITÀ -->
+<section class="section" id="capacita">
+  <div class="section-eyebrow">CAPACITÀ COMPLETE</div>
+  <h2 class="section-title">Tutto quello che<br><span class="accent">Doom sa fare.</span></h2>
+  <p class="section-body">
+    Ogni comando, ogni funzione, ogni controllo. Parli — lui agisce.
+    Niente tastiera. Niente mouse. Solo la tua voce.
+  </p>
+
+  <div class="cap-categories">
+
+    <!-- VOCE E TTS -->
+    <div class="cap-cat">
+      <div class="cap-cat-header">
+        <span class="cap-cat-icon">🎙️</span>
+        <div class="cap-cat-title">VOCE E AUDIO</div>
+      </div>
+      <ul class="cap-list">
+        <li>Ascolta in italiano continuamente</li>
+        <li>Trascrizione con Groq Whisper turbo</li>
+        <li>Risponde in streaming mentre pensa</li>
+        <li>Voce neurale Microsoft ElsaNeural</li>
+        <li>Si interrompe se lo interrompi</li>
+        <li>Standby vocale — si risveglia con "Doom"</li>
+        <li>Calibrazione automatica del microfono</li>
+      </ul>
+    </div>
+
+    <!-- SITI WEB -->
+    <div class="cap-cat">
+      <div class="cap-cat-header">
+        <span class="cap-cat-icon">🌐</span>
+        <div class="cap-cat-title">SITI WEB</div>
+      </div>
+      <ul class="cap-list">
+        <li>Apri YouTube, Gmail, Google, Instagram</li>
+        <li>Netflix, Twitch, GitHub, ChatGPT, Wikipedia</li>
+        <li>Spotify Web, Twitter, Canva e altri</li>
+        <li>Basta dire il nome — nessuna keyword</li>
+        <li>Capisce trascrizioni errate di Whisper</li>
+        <li>Sempre con Chrome, mai con Edge</li>
+      </ul>
+    </div>
+
+    <!-- APP -->
+    <div class="cap-cat">
+      <div class="cap-cat-header">
+        <span class="cap-cat-icon">📱</span>
+        <div class="cap-cat-title">APPLICAZIONI</div>
+      </div>
+      <ul class="cap-list">
+        <li>Apri Chrome, Discord, Spotify, Steam</li>
+        <li>Word, Excel, PowerPoint, Blocco Note</li>
+        <li>WhatsApp, Minecraft, Epic Games, VLC</li>
+        <li>Chiudi qualsiasi app per nome</li>
+        <li>Anti-doppio — non apre due volte</li>
+        <li>Verifica che l'app si sia avviata davvero</li>
+      </ul>
+    </div>
+
+    <!-- SPOTIFY -->
+    <div class="cap-cat">
+      <div class="cap-cat-header">
+        <span class="cap-cat-icon">🎵</span>
+        <div class="cap-cat-title">SPOTIFY</div>
+      </div>
+      <ul class="cap-list">
+        <li>"Metti Billie Jean" — cerca e riproduce</li>
+        <li>"Metti qualcosa di lofi" — lo trova</li>
+        <li>Pausa, riprendi, prossima, precedente</li>
+        <li>Apre Spotify se non è già aperto</li>
+        <li>Doppio click sul primo brano trovato</li>
+        <li>Fallback con tasto media Play</li>
+      </ul>
+    </div>
+
+    <!-- WHATSAPP -->
+    <div class="cap-cat">
+      <div class="cap-cat-header">
+        <span class="cap-cat-icon">💬</span>
+        <div class="cap-cat-title">WHATSAPP</div>
+      </div>
+      <ul class="cap-list">
+        <li>"Scrivi a Marco: arrivo tra 10 min"</li>
+        <li>Trova il contatto, scrive e invia</li>
+        <li>"Chiama Marco" — avvia chiamata vocale</li>
+        <li>"Apri chat con Luca" — apre direttamente</li>
+        <li>Evita invii doppi per sicurezza</li>
+      </ul>
+    </div>
+
+    <!-- EMAIL -->
+    <div class="cap-cat">
+      <div class="cap-cat-header">
+        <span class="cap-cat-icon">📧</span>
+        <div class="cap-cat-title">EMAIL GMAIL</div>
+      </div>
+      <ul class="cap-list">
+        <li>"Leggi le email" — apre prima non letta</li>
+        <li>"Manda email a marco@gmail.com"</li>
+        <li>Compone con oggetto e corpo</li>
+        <li>"Invia l'email" — Ctrl+Enter</li>
+        <li>"Rispondi: ci vediamo domani"</li>
+      </ul>
+    </div>
+
+    <!-- SISTEMA PC -->
+    <div class="cap-cat">
+      <div class="cap-cat-header">
+        <span class="cap-cat-icon">🖥️</span>
+        <div class="cap-cat-title">SISTEMA PC</div>
+      </div>
+      <ul class="cap-list">
+        <li>Alza, abbassa, silenzia il volume</li>
+        <li>Spegni, riavvia, annulla spegnimento</li>
+        <li>Blocca schermo, screenshot</li>
+        <li>Monitor RAM, CPU, batteria ogni 45s</li>
+        <li>Avvisi vocali automatici se critico</li>
+      </ul>
+    </div>
+
+    <!-- GRIGLIA APP -->
+    <div class="cap-cat">
+      <div class="cap-cat-header">
+        <span class="cap-cat-icon">🪟</span>
+        <div class="cap-cat-title">FINESTRE E GRIGLIA</div>
+      </div>
+      <ul class="cap-list">
+        <li>"Griglia app" — apre Vista Attività Win+Tab</li>
+        <li>"Mostra desktop" — Win+D</li>
+        <li>"Finestra a sinistra/destra" — snap</li>
+        <li>"Chiudi finestra", "chiudi tab"</li>
+        <li>"Nuova tab", "aggiorna pagina"</li>
+        <li>Scrolla, zoom in/out, trova in pagina</li>
+      </ul>
+    </div>
+
+    <!-- BROWSER -->
+    <div class="cap-cat">
+      <div class="cap-cat-header">
+        <span class="cap-cat-icon">🔍</span>
+        <div class="cap-cat-title">BROWSER E RICERCA</div>
+      </div>
+      <ul class="cap-list">
+        <li>"Cerca come si fanno i tortellini"</li>
+        <li>"Chi è Einstein" — Google diretto</li>
+        <li>Torna indietro, avanti nella cronologia</li>
+        <li>Legge il contenuto della pagina</li>
+        <li>Cerca YouTube e naviga i risultati</li>
+      </ul>
+    </div>
+
+    <!-- FILE E CARTELLE -->
+    <div class="cap-cat">
+      <div class="cap-cat-header">
+        <span class="cap-cat-icon">📁</span>
+        <div class="cap-cat-title">FILE E CARTELLE</div>
+      </div>
+      <ul class="cap-list">
+        <li>Crea file e cartelle per nome</li>
+        <li>Leggi PDF, Word, file di testo</li>
+        <li>Cerca file in tutto il PC</li>
+        <li>Comprimi in .zip, sposta, elimina</li>
+        <li>"Cosa c'è sul desktop"</li>
+      </ul>
+    </div>
+
+    <!-- CALENDARIO E ROUTINE -->
+    <div class="cap-cat">
+      <div class="cap-cat-header">
+        <span class="cap-cat-icon">📅</span>
+        <div class="cap-cat-title">CALENDARIO E ROUTINE</div>
+      </div>
+      <ul class="cap-list">
+        <li>"Aggiungi impegno: dentista lunedì alle 10"</li>
+        <li>"Cosa ho in calendario oggi"</li>
+        <li>Avviso vocale 10 minuti prima</li>
+        <li>"Crea routine ogni lunedì alle 8: apri Gmail"</li>
+        <li>Esegue automaticamente all'orario</li>
+      </ul>
+    </div>
+
+    <!-- PROMEMORIA -->
+    <div class="cap-cat">
+      <div class="cap-cat-header">
+        <span class="cap-cat-icon">⏱️</span>
+        <div class="cap-cat-title">PROMEMORIA</div>
+      </div>
+      <ul class="cap-list">
+        <li>"Ricordami di chiamare Marco tra 30 minuti"</li>
+        <li>"Avvisami tra 2 ore"</li>
+        <li>Avviso vocale alla scadenza esatta</li>
+        <li>Parser italiano: minuti, ore, secondi</li>
+      </ul>
+    </div>
+
+    <!-- METEO E NOTIZIE -->
+    <div class="cap-cat">
+      <div class="cap-cat-header">
+        <span class="cap-cat-icon">🌤️</span>
+        <div class="cap-cat-title">METEO E NOTIZIE</div>
+      </div>
+      <ul class="cap-list">
+        <li>"Che tempo fa a Milano"</li>
+        <li>"Previsioni per domani"</li>
+        <li>"Ultime notizie" — notizie generali</li>
+        <li>"Notizie di sport", "notizie tech"</li>
+        <li>Dati in tempo reale via API</li>
+      </ul>
+    </div>
+
+    <!-- CALCOLI E CODICE -->
+    <div class="cap-cat">
+      <div class="cap-cat-header">
+        <span class="cap-cat-icon">💻</span>
+        <div class="cap-cat-title">CALCOLI E CODICE</div>
+      </div>
+      <ul class="cap-list">
+        <li>"Calcola 23 × 456 + sqrt(144)"</li>
+        <li>Esegui script Python direttamente</li>
+        <li>"Crea un grafico con questi dati"</li>
+        <li>Genera immagini PNG dei grafici</li>
+        <li>Sandbox isolato — sicuro al 100%</li>
+      </ul>
+    </div>
+
+    <!-- VISIONE SCHERMO -->
+    <div class="cap-cat">
+      <div class="cap-cat-header">
+        <span class="cap-cat-icon">👁️</span>
+        <div class="cap-cat-title">VISIONE SCHERMO</div>
+      </div>
+      <ul class="cap-list">
+        <li>"Cosa vedi sullo schermo" — descrive tutto</li>
+        <li>"Cerca Lyon su YouTube" — trova e clicca</li>
+        <li>"Vai sul canale di Spjockey"</li>
+        <li>"Metti like", "iscriviti al canale"</li>
+        <li>"Scrivi un commento: ottimo video"</li>
+        <li>Clicca elementi per nome su qualsiasi pagina</li>
+      </ul>
+    </div>
+
+    <!-- MEMORIA -->
+    <div class="cap-cat">
+      <div class="cap-cat-header">
+        <span class="cap-cat-icon">🧠</span>
+        <div class="cap-cat-title">MEMORIA</div>
+      </div>
+      <ul class="cap-list">
+        <li>Ricorda tutto quello che gli dici</li>
+        <li>Impara nome, città, professione, età</li>
+        <li>Salva 500–1000 conversazioni passate</li>
+        <li>Ricarica la memoria ad ogni avvio</li>
+        <li>Memoria semantica con ChromaDB</li>
+        <li>Usa i ricordi nelle risposte naturalmente</li>
+      </ul>
+    </div>
+
+    <!-- AUTONOMIA -->
+    <div class="cap-cat">
+      <div class="cap-cat-header">
+        <span class="cap-cat-icon">🤖</span>
+        <div class="cap-cat-title">AUTONOMIA COMPLETA</div>
+      </div>
+      <ul class="cap-list">
+        <li>"Fai da solo: cerca notizie AI e aprile"</li>
+        <li>Pianifica task multi-step con Groq</li>
+        <li>Esegue sequenze complesse da solo</li>
+        <li>Si corregge se un'azione fallisce</li>
+        <li>Aggiornamenti vocali su cosa sta facendo</li>
+      </ul>
+    </div>
+
+    <!-- INFO ISTANTANEE -->
+    <div class="cap-cat">
+      <div class="cap-cat-header">
+        <span class="cap-cat-icon">⚡</span>
+        <div class="cap-cat-title">INFO ISTANTANEE</div>
+      </div>
+      <ul class="cap-list">
+        <li>"Che ore sono" — risposta in 50ms</li>
+        <li>"Che giorno è oggi"</li>
+        <li>Risposta AI con Llama 3.3 70B</li>
+        <li>Routing automatico 8b/70b per velocità</li>
+        <li>Retry automatico se rate limit</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- PIANI -->
+<section class="pricing-section" id="piani">
+  <div class="pricing-inner">
+    <div class="section-eyebrow">PIANI</div>
+    <h2 class="section-title">Scegli il tuo<br><span class="accent">livello di controllo.</span></h2>
+    <p class="section-body">Tutti i piani includono aggiornamenti automatici. Le API keys sono tue e gratuite — paghi solo il software.</p>
+
+    <div class="plans">
+
+      <!-- LITE -->
+      <div class="plan">
+        <div class="plan-tier">DOOM LITE</div>
+        <div class="plan-price-block">
+          <div class="plan-price"><sup>€</sup>2<sub>,29</sub></div>
+          <div class="plan-period">AL MESE · FATTURATO MENSILMENTE</div>
+        </div>
+        <ul class="plan-features">
+          <li>Risposta AI in italiano</li>
+          <li>Apri qualsiasi sito o app con la voce</li>
+          <li>Controllo volume e sistema</li>
+          <li>Meteo e notizie in tempo reale</li>
+          <li>Promemoria vocali</li>
+          <li>Standby e risveglio vocale</li>
+          <li>Interrompi Doom mentre parla</li>
+        </ul>
+        <a href="#" class="plan-btn" onclick="acquista('lite')">INIZIA CON LITE</a>
+      </div>
+
+      <!-- PRO -->
+      <div class="plan featured">
+        <div class="plan-tier">DOOM PRO</div>
+        <div class="plan-price-block">
+          <div class="plan-price"><sup>€</sup>3<sub>,99</sub></div>
+          <div class="plan-period">AL MESE · FATTURATO MENSILMENTE</div>
+        </div>
+        <ul class="plan-features">
+          <li>Tutto di Lite</li>
+          <li>Spotify — cerca e riproduce da solo</li>
+          <li>WhatsApp — messaggi e chiamate vocali</li>
+          <li>Email Gmail — leggi, scrivi, invia</li>
+          <li>Calendario con avvisi vocali automatici</li>
+          <li>Routine programmate (ogni lunedì alle 8…)</li>
+          <li>Gestione completa file e cartelle</li>
+          <li>Memoria conversazioni permanente</li>
+          <li>Voce TTS +25% più veloce</li>
+        </ul>
+        <a href="#" class="plan-btn" onclick="acquista('pro')">INIZIA CON PRO</a>
+      </div>
+
+      <!-- ULTRA -->
+      <div class="plan">
+        <div class="plan-tier">DOOM ULTRA</div>
+        <div class="plan-price-block">
+          <div class="plan-price"><sup>€</sup>5<sub>,99</sub></div>
+          <div class="plan-period">AL MESE · FATTURATO MENSILMENTE</div>
+        </div>
+        <ul class="plan-features">
+          <li>Tutto di Pro</li>
+          <li>Memoria massima — 1000 conversazioni</li>
+          <li>Cerca su YouTube e clicca i video</li>
+          <li>Vai sul canale di qualsiasi creator</li>
+          <li>Metti like, iscriviti, lascia commenti</li>
+          <li>Rispondi alle email automaticamente</li>
+          <li>Task autonomi multi-step</li>
+          <li>Visione schermo con AI</li>
+          <li>Priorità nel supporto</li>
+        </ul>
+        <a href="#" class="plan-btn" onclick="acquista('ultra')">INIZIA CON ULTRA</a>
+      </div>
+
+    </div>
+
+    <p style="text-align:center;font-family:var(--mono);font-size:10px;color:rgba(74,122,155,.5);margin-top:32px;letter-spacing:1px;">
+      CANCELLA QUANDO VUOI &nbsp;·&nbsp; NESSUN COSTO NASCOSTO &nbsp;·&nbsp; LE TUE API KEYS RESTANO TUE
+    </p>
+  </div>
+</section>
+
+<!-- COME FUNZIONA -->
+<section class="how-section" id="come-funziona">
+  <div class="how-inner">
+    <div class="section-eyebrow">SETUP</div>
+    <h2 class="section-title">Attivo in<br><span class="accent">5 minuti.</span></h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h4>ACQUISTA</h4>
+        <p>Scegli il piano. Paga con carta. Ricevi la license key via email in automatico.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h4>SCARICA</h4>
+        <p>Scarica il file .exe. Doppio click. Nessun Python, nessun terminale, nessuna configurazione tecnica.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h4>INSERISCI KEY</h4>
+        <p>Al primo avvio inserisci la license key. Doom ti guida a ottenere le API keys gratuite con i link diretti.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h4>PARLA</h4>
+        <p>Doom è pronto. Parlagli. Lui risponde, agisce, ricorda. Sempre.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">◈ D.O.O.M</div>
+  <div class="footer-links">
+    <a href="#">PRIVACY</a>
+    <a href="#">TERMINI</a>
+    <a href="mailto:support@doom-ai.it">SUPPORTO</a>
+  </div>
+  <div class="footer-copy">© 2025 DOOM AI · TUTTI I DIRITTI RISERVATI</div>
+</footer>
+
+<script>
+const SERVER = "https://doom-license.railway.app";
+
+function acquista(piano) {
+  const email = prompt("Inserisci la tua email per ricevere la license key:");
+  if (!email || !email.includes('@')) {
+    alert("Email non valida. Inserisci un'email corretta.");
+    return;
+  }
+  fetch(`${SERVER}/api/checkout`, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({versione: piano, email})
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.checkout_url) {
+      window.location.href = data.checkout_url;
+    } else {
+      alert("Contattaci a support@doom-ai.it per completare l'acquisto.");
+    }
+  })
+  .catch(() => {
+    alert("Contattaci a support@doom-ai.it per completare l'acquisto.");
+  });
+}
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.cap-card, .plan, .step').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(24px)';
+  el.style.transition = 'opacity .6s ease, transform .6s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
